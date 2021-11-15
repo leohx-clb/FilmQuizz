@@ -21,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private  final String TAG ="QuizActivity";
     private static final String KEY_INDEX ="index";
     private static final String KEY_SCORE ="score";
+    private static  final String KEY_BTN_RESTART = "btnRestart";
+    private static final String KEY_TRUE ="btnTrue";
+    private static final String KEY_FALSE ="btnFalse";
 
     private TextView tvQuestion;
     private TextView tvScrore;
@@ -51,14 +54,27 @@ public class MainActivity extends AppCompatActivity {
         questions.add(new Question(getString(R.string.question_reservoir_dogs), true));
         questions.add(new Question(getString(R.string.question_citizen_kane), false));
 
+        int btnRestartVisibility = 0;
+
         if (savedInstanceState != null){
             indexQuestion = savedInstanceState.getInt(KEY_INDEX);
             score = savedInstanceState.getInt(KEY_SCORE);
+            btnRestartVisibility = savedInstanceState.getInt(KEY_BTN_RESTART);
+            btnRestart.setVisibility(btnRestartVisibility);
+            btnTrue.setVisibility(savedInstanceState.getInt(KEY_TRUE));
+            btnFalse.setVisibility(savedInstanceState.getInt(KEY_FALSE));
         }
 
-        question = questions.get(indexQuestion);
-        tvQuestion.setText(question.getText());
-        tvScrore.setText("Votre score est de : "+score);
+        if (btnRestartVisibility == View.VISIBLE){
+            question = questions.get(questions.size() - 1);
+            tvQuestion.setText(question.getText());
+        }
+        else {
+            question = questions.get(indexQuestion);
+            tvQuestion.setText(question.getText());
+        }
+
+        tvScrore.setText(String.format("Votre score est de : %d ",score));
 
 
         btnTrue.setOnClickListener(new View.OnClickListener() {
@@ -80,9 +96,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 score = 0;
                 indexQuestion = 0;
-                tvScrore.setText("Votre score est de : "+score);
+                tvScrore.setText(String.format("Votre score est de : %d ",score));
                 tvQuestion.setText(question.getText());
                 btnRestart.setVisibility(View.INVISIBLE);
+                btnTrue.setVisibility(View.VISIBLE);
+                btnFalse.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -91,9 +110,11 @@ public class MainActivity extends AppCompatActivity {
     public void testQuestion(boolean test){
         if (question.isAnswer() == test && indexQuestion <= questions.size()){
             score++;
-            tvScrore.setText("Votre score est de : "+score);
+            tvScrore.setText(String.format("Votre score est de : %d ",score));
         }
+        if (indexQuestion < questions.size()){
         indexQuestion++;
+        }
         if(indexQuestion < questions.size()){
             question = questions.get(indexQuestion);
             tvQuestion.setText(question.getText());
@@ -101,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
         else{
             tvQuestion.setText("Le jeu est terminer");
             btnRestart.setVisibility(View.VISIBLE);
+            btnTrue.setVisibility(View.INVISIBLE);
+            btnFalse.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -111,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
         // Key is string
         outState.putInt(KEY_INDEX, indexQuestion);
         outState.putInt(KEY_SCORE, score);
+        outState.putInt(KEY_BTN_RESTART,btnRestart.getVisibility());
+        outState.putInt(KEY_TRUE,btnTrue.getVisibility());
+        outState.putInt(KEY_FALSE,btnFalse.getVisibility());
     }
 
     @Override
