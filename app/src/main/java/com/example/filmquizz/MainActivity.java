@@ -3,9 +3,13 @@ package com.example.filmquizz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static  final String KEY_BTN_RESTART = "btnRestart";
     private static final String KEY_TRUE ="btnTrue";
     private static final String KEY_FALSE ="btnFalse";
+    public static final String KEY_QUESTION = "question";
 
     private TextView tvQuestion;
     private TextView tvScrore;
@@ -34,11 +39,40 @@ public class MainActivity extends AppCompatActivity {
     private int indexQuestion = 0;
     private int score = 0;
     private Question question;
+    private Context context;
 
+    //menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    //        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.cheat:
+                //crée un Intent pour ensuite démarrer CheatActivity
+                Intent intent = new Intent(context, CheatActivity.class);
+
+                // ajouter dans l'intent des données
+                intent.putExtra(KEY_QUESTION, question);
+
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //quizz page
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = getApplicationContext();
 
         Log.d(TAG,"onCreate() called");
 
